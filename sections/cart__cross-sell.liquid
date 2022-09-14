@@ -1,0 +1,362 @@
+{% if section.settings.cart_cross_sell_enable %}
+<!-- Start Cross Sell Section --> 
+
+<script
+  type="application/json"
+  data-section-type="cart-simple-cross-sell"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+{% comment %} Advanced {% endcomment %}
+{%- assign css_class = section.settings.css_class -%}
+{%- assign custom_css = section.settings.custom_css -%}
+
+{% comment %} Section specific CSS {% endcomment %}
+{% style %}
+  {%
+    render 'css-loop',
+    css: custom_css,
+    id: id
+  %}
+
+.cart-cross-sell {
+  padding: 20px;
+  text-align: center;
+  margin: 20px auto;
+  max-width: 800px;
+  border: 1px solid {{ section.settings.cart-border }};
+  border-radius: 8px;
+  background-color: {{ section.settings.cart-background }};
+}
+.cart-cross-sell-row {
+   display: -webkit-flex;
+   display: flex;
+   -webkit-flex-direction: row /* works with row or column */
+   flex-direction: row;
+   -webkit-align-items: center;
+   align-items: center;
+   -webkit-justify-content: center;
+   justify-content: center;
+  margin: 0 auto;
+}
+.button {
+  max-width: 200px;
+  margin: 15px auto; 
+}
+.cart-cross-sell-bottom {
+  font-size: .8rem;
+  line-height: 1.6em;
+  max-width: 700px;
+  margin: 1rem auto 0;
+}
+.cart-cross-sell-image {
+  min-width: 25%;
+  margin-right: 15px;
+  margin-bottom: -10px;
+}
+
+.cart-cross-sell-image img {
+max-width:100%;
+max-height: 170px;
+  border-radius: 5px;
+}
+
+.cart-cross-sell-text {
+  padding-left: 10px;
+}
+
+.cart-cross-sell-title {
+	font-size: 1.4rem;
+	font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .cart-cross-sell-image {
+    display: none;
+  }
+  .cart-cross-sell {
+  width: 90%;
+  }  
+}
+
+{% endstyle %}
+
+<section class="section {{ css_class }}">
+  <div class="container">
+    <div class="one-whole column custom-html-container">
+
+      {% unless section.settings.cart_cross_sell_product_1 == blank %}
+      {% assign upsell1 = 0 %}
+      {% assign product1 = section.settings.cart_cross_sell_product_1 %}
+      {% assign product1-title = all_products[product1].title %}
+      {% assign product1-url = all_products[product1].url %}
+      {% for item in cart.items %}
+      {% if item.product.title contains product1-title %}
+      {% assign upsell1 = upsell1 | plus:1 %}
+      {% endif %}
+      {% endfor %}
+      {% if upsell1 == 0 %}
+      <div class="cart-cross-sell"> 
+        <div class="cart-cross-sell-row">
+          <div class="cart-cross-sell-image"> 
+            <img src="{{ all_products[product1] | img_url: '300x' }}">
+          </div>
+          <div class="cart-cross-sell-text">
+            {% if section.settings.cart_product_1_title %}
+            <p class="cart-cross-sell-title">{{ product1-title }}</p>
+            {% endif %}
+            {{ section.settings.cart_cross_sell_top_text }}
+            <div>
+              {% if product1.has_only_default_variant %}
+              {% assign variant1-id = all_products[product1].first_available_variant.id %}
+              <a href="/cart/add?id={{ variant1-id }}" class="button button--secondary global-button global-button--primary">
+                {% else %}
+                <a href="{{ product1-url }}" class="button button--secondary global-button global-button--primary">
+                  {% endif %} 
+                  {{ section.settings.cart_cross_sell_button }}
+                </a>
+                </div>
+            </div>
+          </div>
+          <div class="cart-cross-sell-bottom">{{ section.settings.cart_cross_sell_bottom_text }}</div>
+        </div>
+
+        {% else %}
+
+        {% unless section.settings.cart_cross_sell_product_2 == blank %}
+        {% assign upsell2 = 0 %}
+        {% assign product2 = section.settings.cart_cross_sell_product_2 %}
+        {% assign product2-title = all_products[product2].title %}
+        {% assign product2-url = all_products[product2].url %}
+        {% for item in cart.items %}
+        {% if item.product.title contains product2-title %}
+        {% assign upsell2 = upsell2 | plus:1 %}
+        {% endif %}
+        {% endfor %}
+        {% if upsell2 == 0 %}
+        <div class="cart-cross-sell"> 
+          <div class="cart-cross-sell-row">
+            <div class="cart-cross-sell-image"> 
+              <img src="{{ all_products[product2] | img_url: '300x' }}">
+            </div>
+            <div class="cart-cross-sell-text">
+              {% if section.settings.cart_product_2_title %}
+              <p class="cart-cross-sell-title">{{ product2-title }}</p>
+              {% endif %}
+              {{ section.settings.cart_cross_sell_top_text2 }}
+              <div>
+                {% if product2.has_only_default_variant %}
+                {% assign variant2-id = all_products[product2].first_available_variant.id %}
+                <a href="/cart/add?id={{ variant2-id }}" class="button button--secondary global-button global-button--primary">
+                  {% else %}
+                  <a href="{{ product2-url }}" class="button button--secondary global-button global-button--primary">
+                    {% endif %} 
+                    {{ section.settings.cart_cross_sell_button2 }}
+                  </a>
+                  </div>
+              </div>
+            </div>
+            <div class="cart-cross-sell-bottom">{{ section.settings.cart_cross_sell_bottom_text2 }}</div>
+          </div>
+
+          {% else %}
+
+          {% unless section.settings.cart_cross_sell_product_3 == blank %}
+          {% assign upsell3 = 0 %}
+          {% assign product3 = section.settings.cart_cross_sell_product_3 %}
+          {% assign product3-title = all_products[product3].title %}
+          {% assign product3-url = all_products[product3].url %}
+          {% for item in cart.items %}
+          {% if item.product.title contains product3-title %}
+          {% assign upsell3 = upsell3 | plus:1 %}
+          {% endif %}
+          {% endfor %}
+          {% if upsell3 == 0 %}
+          <div class="cart-cross-sell"> 
+            <div class="cart-cross-sell-row">
+              <div class="cart-cross-sell-image"> 
+                <img src="{{ all_products[product3] | img_url: '300x' }}">
+              </div>
+              <div class="cart-cross-sell-text">
+                {% if section.settings.cart_product_3_title %}
+                <p class="cart-cross-sell-title">{{ product3-title }}</p>
+                {% endif %}
+                {{ section.settings.cart_cross_sell_top_text3 }}
+                <div>
+                  {% if product3.has_only_default_variant %}
+                  {% assign variant3-id = all_products[product3].first_available_variant.id %}
+                  <a href="/cart/add?id={{ variant3-id }}" class="button button--secondary global-button global-button--primary">
+                    {% else %}
+                    <a href="{{ product3-url }}" class="button button--secondary global-button global-button--primary">
+                      {% endif %} 
+                      {{ section.settings.cart_cross_sell_button3 }}
+                    </a>
+                    </div>
+                </div>
+              </div>
+              <div class="cart-cross-sell-bottom">{{ section.settings.cart_cross_sell_bottom_text3 }}</div>
+            </div>
+            {% endif %}
+            {% endunless %}
+
+            {% endif %}
+            {% endunless %}
+
+            {% endif %}
+            {% endunless %}
+
+          </div>
+        </div>
+        </section>
+      
+{% endif %}
+{% schema %}
+{
+  "name": "Cart simple cross-sell",
+  "class": "shopify-section--cart-simple-cross-sell",
+  "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_cross_sell_enable",
+        "label": "Show cross-sell promotion in cart"
+      },
+      {
+        "type": "header",
+        "content": "Promotion Colors"
+      },
+      {
+        "type": "color",
+        "id": "cart-background",
+        "label": "Background Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "cart-border",
+        "label": "Border Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Cross-sell 1"
+      },
+      {
+        "type": "product",
+        "id": "cart_cross_sell_product_1",
+        "label": "Product 1"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_product_1_title",
+        "label": "Show product title"
+      },
+      {
+        "type": "richtext",
+        "id": "cart_cross_sell_top_text",
+        "label": "Cross-sell text",
+        "default": "<p><\/p>"
+      },
+      {
+        "type": "text",
+        "id": "cart_cross_sell_button",
+        "label": "Button text"
+      },
+      {
+        "type": "richtext",
+        "id": "cart_cross_sell_bottom_text",
+        "label": "Cross-sell bottom text",
+        "default": "<p><\/p>"
+      },
+      {
+        "type": "header",
+        "content": "Cross-sell 2"
+      },
+      {
+        "type": "product",
+        "id": "cart_cross_sell_product_2",
+        "label": "Product 2"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_product_2_title",
+        "label": "Show product title"
+      },
+      {
+        "type": "richtext",
+        "id": "cart_cross_sell_top_text2",
+        "label": "Cross-sell text 2",
+        "default": "<p><\/p>"
+      },
+      {
+        "type": "text",
+        "id": "cart_cross_sell_button2",
+        "label": "Button text 2"
+      },
+      {
+        "type": "richtext",
+        "id": "cart_cross_sell_bottom_text2",
+        "label": "Cross-sell bottom text 2",
+        "default": "<p><\/p>"
+      },
+      {
+        "type": "header",
+        "content": "Cross-sell 3"
+      },
+      {
+        "type": "product",
+        "id": "cart_cross_sell_product_3",
+        "label": "Product 3"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_product_3_title",
+        "label": "Show product title"
+      },
+      {
+        "type": "richtext",
+        "id": "cart_cross_sell_top_text3",
+        "label": "Cross-sell text 3",
+        "default": "<p><\/p>"
+      },
+      {
+        "type": "text",
+        "id": "cart_cross_sell_button3",
+        "label": "Button text 3"
+      },
+      {
+        "type": "richtext",
+        "id": "cart_cross_sell_bottom_text3",
+        "label": "Cross-sell bottom text 3",
+        "default": "<p><\/p>"
+      },
+
+    {
+      "type": "header",
+      "content": "Advanced"
+    },
+    {
+      "type": "paragraph",
+      "content": "[Learn more](https://help.outofthesandbox.com/hc/en-us/articles/360022329373)"
+    },
+    {
+      "type": "text",
+      "id": "css_class",
+      "label": "CSS Class"
+    },
+    {
+      "type": "textarea",
+      "id": "custom_css",
+      "label": "Custom CSS"
+    }
+  ],
+  "presets": [{
+    "name": "Cart simple cross-sell",
+    "category": "Content"
+  }],
+  "templates": [
+    "cart"
+  ]
+}
+
+{% endschema %}
