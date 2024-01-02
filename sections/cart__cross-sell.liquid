@@ -1,370 +1,572 @@
 {% comment %}
- 
-Custom section created by JadePuma
-Instructions - https://jadepuma.com/blogs/shopify-tutorials/simple-cross-sell-section-for-your-shopify-cart
-Last editted - 14Sep22
- 
+
+  Custom section created by JadePuma
+  Instructions - https://jadepuma.com/blogs/shopify-tutorials/simple-cross-sell-section-for-your-shopify-cart
+  Last editted - 05Nov23
 {% endcomment %}
 
-{% if section.settings.cart_cross_sell_enable %}
-<!-- Start Cross Sell Section --> 
+
+<!-- Start Cross Sell Section -->
 
 <script
   type="application/json"
   data-section-type="cart-simple-cross-sell"
-  data-section-id="{{ section.id }}"
->
-</script>
+  data-section-id="{{ section.id }}"></script>
+
+{% assign cart_items_count = cart.items | size %}
+{% assign promo_titles = "" %}
+{% assign promos_in_cart = 0 %}
+{% assign all_products_count = 0 %}
+{% assign description_array = "" | split: ',' %}
+
+{% for block in section.blocks %}
+
+
+  {% assign all_products_count = all_products_count | plus: 1 %}
+
+  {% for item in cart.items %}
+    
+    {% if item.product.title contains block.settings.cart_cross_sell_product.title %}
+      {% assign promos_in_cart = promos_in_cart | plus: 1 %}
+      {% assign item_title_handle = item.product.title |  handleize %}
+      
+      {% assign promo_titles = promo_titles | append: item_title_handle| append: ", " %}
+    {% endif %}
+  {% endfor %}
+  {% if block.settings.cart_cross_sell_top_text != blank %}
+    {% assign current_description = "true" %}
+  {% else %}
+    {% assign current_description = "false" %}
+  {% endif %}
+
+  {% if description_array == "" %}
+    {% assign description_array = current_description %}
+  {% else %}
+    {% assign description_array = description_array | append: "," | append: current_description %}
+  {% endif %}
+  {% if block.settings.cart_cross_sell_top_text != blank %}
+    {% assign description = true %}
+  {% endif %}
+  {% assign product = block.settings.cart_cross_sell_product %}
+  {% assign variant-id = all_products[product].first_available_variant.id %}
+
+  
+{% endfor %}
+
+
+{% assign product_count = section.settings.product_limit | plus: 0 %}
+{% assign product_card_loop = product_count | plus: promos_in_cart %}
+{% assign product_count_limit = product_card_loop | minus: all_products_count  %}
+{% if product_count_limit >= 0 %}
+  {% assign product_count = product_count | minus: product_count_limit %}
+{% endif %}
+{% comment %} Setting up variables for product_count specific styles {% endcomment %}
+  {% case product_count %}
+    {% when 1 %}
+      {% assign css_cross_sell_padding = "10px" %}
+      {% assign css_cross_sell_min_width = "50%" %}
+      {% assign css_cross_sell_max_width = "50%" %}
+      {% assign css_cross_sell_row_flex_direction = "row" %}
+      {% assign css_cross_sell_image_flex = ".5" %}
+      {% assign css_cross_sell_text_padding = "10px 20px 10px 20px" %}
+      {% assign css_cross_sell_text_min_width = "min-width: 200px;" %}
+      {% assign css_cross_sell_text_justify_content = "center" %}
+    {% when 2 %}
+      {% assign css_cross_sell_padding = "10px" %}
+      {% assign css_cross_sell_width = "50%" %}
+      {% assign css_cross_sell_row_flex_direction = "row" %}
+      {% assign css_cross_sell_image_flex = ".75" %}
+      {% assign css_cross_sell_text_padding = "10px 0 10px 15px" %}
+      {% assign css_cross_sell_text_justify_content = "center" %}
+    {% when 3 %}
+      {% assign css_cross_sell_padding = "20px 10px 15px 10px" %}
+      {% assign css_cross_sell_width = "350px" %}
+      {% assign css_cross_sell_row_flex_direction = "column" %}
+      {% assign css_cross_sell_button_margin = "15px 0 0" %}
+      {% assign css_cross_sell_image_max_width = "max-width: 245px;" %}
+      {% assign css_cross_sell_text_padding = "30px 10px 10px 10px" %}
+      {% assign css_cross_sell_text_justify_content = "space-between" %}
+  {% endcase %}
+  {% assign border_color = section.settings.border_color %}
+              {% assign background_color = section.settings.background_color %}
+
 
 {% comment %} Advanced {% endcomment %}
-{%- assign css_class = section.settings.css_class -%}
-{%- assign custom_css = section.settings.custom_css -%}
+{% assign css_class = section.settings.css_class %}
+{% assign custom_css = section.settings.custom_css %}
 
 {% comment %} Section specific CSS {% endcomment %}
-{% style %}
-  {%
-    render 'css-loop',
-    css: custom_css,
-    id: id
-  %}
-
-.cart-cross-sell {
-  padding: 20px;
-  text-align: center;
-  margin: 20px auto;
-  max-width: 800px;
-  border: 1px solid {{ section.settings.cart-border }};
-  border-radius: 8px;
-  background-color: {{ section.settings.cart-background }};
-}
-.cart-cross-sell-row {
-   display: -webkit-flex;
-   display: flex;
-   -webkit-flex-direction: row /* works with row or column */
-   flex-direction: row;
-   -webkit-align-items: center;
-   align-items: center;
-   -webkit-justify-content: center;
-   justify-content: center;
-  margin: 0 auto;
-}
-.cart-cross-sell .button {
-  max-width: 200px;
-  margin: 15px auto; 
-}
-.cart-cross-sell-bottom {
-  font-size: .8rem;
-  line-height: 1.6em;
-  max-width: 700px;
-  margin: 1rem auto 0;
-}
-.cart-cross-sell-image {
-  min-width: 25%;
-  margin-right: 15px;
-  margin-bottom: -10px;
-}
-
-.cart-cross-sell-image img {
-max-width:100%;
-max-height: 170px;
-  border-radius: 5px;
-}
-
-.cart-cross-sell-text {
-  padding-left: 10px;
-}
-
-.cart-cross-sell-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .cart-cross-sell-image {
-    display: none;
-  }
-  .cart-cross-sell {
-  width: 90%;
-  }  
-}
-
-{% endstyle %}
-
-<section class="section {{ css_class }}">
-  <div class="container">
-    <div class="one-whole column custom-html-container">
-
-      {% unless section.settings.cart_cross_sell_product_1 == blank %}
-      {% assign upsell1 = 0 %}
-      {% assign product1 = section.settings.cart_cross_sell_product_1 %}
-      {% assign product1-title = all_products[product1].title %}
-      {% assign product1-url = all_products[product1].url %}
-      {% for item in cart.items %}
-      {% if item.product.title contains product1-title %}
-      {% assign upsell1 = upsell1 | plus:1 %}
+  {% style %}
+  
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+  
+      {% if section.settings.width == 'wide' %}
+        width: 100%;
       {% endif %}
-      {% endfor %}
-      {% if upsell1 == 0 %}
-      <div class="cart-cross-sell"> 
-        <div class="cart-cross-sell-row">
-          <div class="cart-cross-sell-image"> 
-            <img src="{{ all_products[product1] | img_url: '300x' }}">
-          </div>
-          <div class="cart-cross-sell-text">
-            {% if section.settings.cart_product_1_title %}
-            <p class="cart-cross-sell-title">{{ product1-title }}</p>
-            {% endif %}
-            {{ section.settings.cart_cross_sell_top_text }}
-            <div>
-              {% if product1.has_only_default_variant %}
-              {% assign variant1-id = all_products[product1].first_available_variant.id %}
-              <a href="/cart/add?id={{ variant1-id }}" class="button button--secondary global-button global-button--primary">
-                {% else %}
-                <a href="{{ product1-url }}" class="button button--secondary global-button global-button--primary">
-                  {% endif %} 
-                  {{ section.settings.cart_cross_sell_button }}
-                </a>
-                </div>
-            </div>
-          </div>
-          <div class="cart-cross-sell-bottom">{{ section.settings.cart_cross_sell_bottom_text }}</div>
-        </div>
-
-        {% else %}
-
-        {% unless section.settings.cart_cross_sell_product_2 == blank %}
-        {% assign upsell2 = 0 %}
-        {% assign product2 = section.settings.cart_cross_sell_product_2 %}
-        {% assign product2-title = all_products[product2].title %}
-        {% assign product2-url = all_products[product2].url %}
-        {% for item in cart.items %}
-        {% if item.product.title contains product2-title %}
-        {% assign upsell2 = upsell2 | plus:1 %}
-        {% endif %}
-        {% endfor %}
-        {% if upsell2 == 0 %}
-        <div class="cart-cross-sell"> 
-          <div class="cart-cross-sell-row">
-            <div class="cart-cross-sell-image"> 
-              <img src="{{ all_products[product2] | img_url: '300x' }}">
-            </div>
-            <div class="cart-cross-sell-text">
-              {% if section.settings.cart_product_2_title %}
-              <p class="cart-cross-sell-title">{{ product2-title }}</p>
-              {% endif %}
-              {{ section.settings.cart_cross_sell_top_text2 }}
-              <div>
-                {% if product2.has_only_default_variant %}
-                {% assign variant2-id = all_products[product2].first_available_variant.id %}
-                <a href="/cart/add?id={{ variant2-id }}" class="button button--secondary global-button global-button--primary">
-                  {% else %}
-                  <a href="{{ product2-url }}" class="button button--secondary global-button global-button--primary">
-                    {% endif %} 
-                    {{ section.settings.cart_cross_sell_button2 }}
-                  </a>
-                  </div>
-              </div>
-            </div>
-            <div class="cart-cross-sell-bottom">{{ section.settings.cart_cross_sell_bottom_text2 }}</div>
-          </div>
-
-          {% else %}
-
-          {% unless section.settings.cart_cross_sell_product_3 == blank %}
-          {% assign upsell3 = 0 %}
-          {% assign product3 = section.settings.cart_cross_sell_product_3 %}
-          {% assign product3-title = all_products[product3].title %}
-          {% assign product3-url = all_products[product3].url %}
-          {% for item in cart.items %}
-          {% if item.product.title contains product3-title %}
-          {% assign upsell3 = upsell3 | plus:1 %}
-          {% endif %}
-          {% endfor %}
-          {% if upsell3 == 0 %}
-          <div class="cart-cross-sell"> 
-            <div class="cart-cross-sell-row">
-              <div class="cart-cross-sell-image"> 
-                <img src="{{ all_products[product3] | img_url: '300x' }}">
-              </div>
-              <div class="cart-cross-sell-text">
-                {% if section.settings.cart_product_3_title %}
-                <p class="cart-cross-sell-title">{{ product3-title }}</p>
-                {% endif %}
-                {{ section.settings.cart_cross_sell_top_text3 }}
-                <div>
-                  {% if product3.has_only_default_variant %}
-                  {% assign variant3-id = all_products[product3].first_available_variant.id %}
-                  <a href="/cart/add?id={{ variant3-id }}" class="button button--secondary global-button global-button--primary">
-                    {% else %}
-                    <a href="{{ product3-url }}" class="button button--secondary global-button global-button--primary">
-                      {% endif %} 
-                      {{ section.settings.cart_cross_sell_button3 }}
-                    </a>
-                    </div>
-                </div>
-              </div>
-              <div class="cart-cross-sell-bottom">{{ section.settings.cart_cross_sell_bottom_text3 }}</div>
-            </div>
-            {% endif %}
-            {% endunless %}
-
-            {% endif %}
-            {% endunless %}
-
-            {% endif %}
-            {% endunless %}
-
-          </div>
-        </div>
-        </section>
-      
-{% endif %}
-{% schema %}
-{
-  "name": "Cart simple cross-sell",
-  "class": "shopify-section--cart-simple-cross-sell",
-  "settings": [
-      {
-        "type": "checkbox",
-        "id": "cart_cross_sell_enable",
-        "label": "Show cross-sell promotion in cart"
-      },
-      {
-        "type": "header",
-        "content": "Promotion Colors"
-      },
-      {
-        "type": "color",
-        "id": "cart-background",
-        "label": "Background Color",
-        "default": "#ffffff"
-      },
-      {
-        "type": "color",
-        "id": "cart-border",
-        "label": "Border Color",
-        "default": "#ffffff"
-      },
-      {
-        "type": "header",
-        "content": "Cross-sell 1"
-      },
-      {
-        "type": "product",
-        "id": "cart_cross_sell_product_1",
-        "label": "Product 1"
-      },
-      {
-        "type": "checkbox",
-        "id": "cart_product_1_title",
-        "label": "Show product title"
-      },
-      {
-        "type": "richtext",
-        "id": "cart_cross_sell_top_text",
-        "label": "Cross-sell text",
-        "default": "<p><\/p>"
-      },
-      {
-        "type": "text",
-        "id": "cart_cross_sell_button",
-        "label": "Button text"
-      },
-      {
-        "type": "richtext",
-        "id": "cart_cross_sell_bottom_text",
-        "label": "Cross-sell bottom text",
-        "default": "<p><\/p>"
-      },
-      {
-        "type": "header",
-        "content": "Cross-sell 2"
-      },
-      {
-        "type": "product",
-        "id": "cart_cross_sell_product_2",
-        "label": "Product 2"
-      },
-      {
-        "type": "checkbox",
-        "id": "cart_product_2_title",
-        "label": "Show product title"
-      },
-      {
-        "type": "richtext",
-        "id": "cart_cross_sell_top_text2",
-        "label": "Cross-sell text 2",
-        "default": "<p><\/p>"
-      },
-      {
-        "type": "text",
-        "id": "cart_cross_sell_button2",
-        "label": "Button text 2"
-      },
-      {
-        "type": "richtext",
-        "id": "cart_cross_sell_bottom_text2",
-        "label": "Cross-sell bottom text 2",
-        "default": "<p><\/p>"
-      },
-      {
-        "type": "header",
-        "content": "Cross-sell 3"
-      },
-      {
-        "type": "product",
-        "id": "cart_cross_sell_product_3",
-        "label": "Product 3"
-      },
-      {
-        "type": "checkbox",
-        "id": "cart_product_3_title",
-        "label": "Show product title"
-      },
-      {
-        "type": "richtext",
-        "id": "cart_cross_sell_top_text3",
-        "label": "Cross-sell text 3",
-        "default": "<p><\/p>"
-      },
-      {
-        "type": "text",
-        "id": "cart_cross_sell_button3",
-        "label": "Button text 3"
-      },
-      {
-        "type": "richtext",
-        "id": "cart_cross_sell_bottom_text3",
-        "label": "Cross-sell bottom text 3",
-        "default": "<p><\/p>"
-      },
-
-    {
-      "type": "header",
-      "content": "Advanced"
-    },
-    {
-      "type": "paragraph",
-      "content": "[Learn more](https://help.outofthesandbox.com/hc/en-us/articles/360022329373)"
-    },
-    {
-      "type": "text",
-      "id": "css_class",
-      "label": "CSS Class"
-    },
-    {
-      "type": "textarea",
-      "id": "custom_css",
-      "label": "Custom CSS"
     }
-  ],
-  "presets": [{
+    {%
+    render 'css-loop',
+        css: custom_css,
+        id: id
+    %}
+  
+    .cart-cross-sell {
+      padding: {{ css_cross_sell_padding }};
+      text-align: center;
+      margin: 10px;
+      {% if product_count == 1 %}
+        min-width: {{ css_cross_sell_min_width }};
+        max-width: {{ css_cross_sell_max_width }};
+      {% else %}
+        width: {{ css_cross_sell_width }};
+      {% endif %}
+      border-radius: 8px;
+      background-color: {{ background_color }};
+      border: 1px solid{{ border_color }};
+    }
+  
+    .cart-cross-sell-row {
+      display: flex;
+      margin-bottom: 0;
+      flex-direction: {{ css_cross_sell_row_flex_direction }};
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      height: 101%;
+    }
+    .text-container {
+      flex: 1;
+    }
+    p {
+      word-wrap: break-word;
+    }
+  
+    .description-text p {
+      max-width: 100%;
+    }
+  
+    .cart-cross-sell-button {
+      width: 100%;
+      {% if product_count == 3 %}
+        margin-top: 15px;
+        margin-bottom: 0;
+      {% elsif product_count != 3 %}
+        margin: 15px 0 10px 0;
+      {% endif %}
+  
+    }
+  
+    .cart-cross-sell-bottom {
+      font-size: 0.8rem;
+      line-height: 1.6em;
+      max-width: 700px;
+      margin: 1rem auto 0;
+    }
+    .cart-cross-sell-image {
+      display: flex;
+  
+      flex: {{ css_cross_sell_image_flex }};
+    }
+    .cart-cross-sell-image img {
+      {{ css_cross_sell_image_max_width }}
+      height: auto;
+      border-radius: 5px;
+    }
+  
+    .cart-cross-sell-text {
+      {{ css_cross_sell_text_min_width }}
+      padding: {{ css_cross_sell_text_padding }};
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: {{ css_cross_sell_text_justify_content }};
+      overflow-wrap: break-word;
+      height: inherit;
+      align-items: flex-start;
+    }
+    .cart-cross-sell-text div {
+      overflow: hidden;
+      width: inherit;
+    }
+  
+    .cart-cross-sell-title {
+      font-size: 1rem;
+      height: inherit;
+      max-height: 120px;
+    }
+  
+    .custom-html-container {
+      display: flex;
+      justify-content: center;
+      padding-top: 20px;
+      border-radius: 5px;
+      margin-bottom: 0;
+    }
+  
+    .cross-sell-header {
+      padding-bottom: 10px;
+      width: 100%;
+      border-bottom: 1px solid #e3d9cc;
+    }
+  
+    .cross-sell-header h3 {
+      padding-left: 0;
+    }
+  
+    .truncate {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: 1.4rem
+    }
+    .truncate-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  
+    .product_text {
+      height: 120px;
+      overflow: hidden;
+    }
+  
+    .text-container {
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .description-text {
+      overflow: hidden;
+      padding: 2px 0;
+      max-height: fit-content;
+      font-size: 0.8rem;
+    }
+    .description-text p {
+      overflow-wrap: break-word;
+    }
+  
+    @media only screen and (max-width: 768px) {
+      #shopify-section-{{ section.id }} {
+        padding-top: {{ section.settings.mobile_padding_top }}px;
+        padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+        {% if section.settings.width == 'wide' %}
+          width: 100%;
+        {% endif %}
+      }
+      .cart-cross-sell-button a {
+        margin-bottom: 5px;
+      }
+      .cart-cross-sell {
+        padding: 20px 10px 10px;
+        margin: 10px;
+        min-width: 300px;
+        max-width: 300px;
+        width: 300px;
+      }
+      .cart-cross-sell-image img {
+        max-width: 245px;
+  
+      }
+      .cart-cross-sell-image{
+        flex:none;
+      }
+  
+      .cart-cross-sell-text {
+        padding: 10px 15px 0;
+        width: 100%;
+        max-width: 300px;
+      }
+      .custom-html-container > * {
+        display: none;
+      }
+      .custom-html-container > *:first-child {
+        display: flex;
+        justify-content: center;
+      }
+      .custom-html-container {
+        align-items: center;
+      }
+      .custom-html-container,
+      .cart-cross-sell-text,
+      .cart-cross-sell-row {
+        flex-direction: column;
+      }
+      .description-text {
+        max-height: fit-content;
+      }
+    }
+  
+  {% endstyle %}
+
+
+
+{% if product_count != 0 %}
+  {% if cart_items_count != 0 %}
+  <section class="section {{ css_class }}">
+    <div class="cross-sell-header">
+      <h3>{{ section.settings.header }}</h3>
+    </div>
+    <div class="container">
+      <div class="one-whole column custom-html-container">
+        {% assign counter = 1 %}
+        {% assign product_limit = section.settings.product_limit %}
+        {% assign product_limit = product_limit | plus: 0 %}
+
+        {% for block in section.blocks limit: product_card_loop %}
+          {% assign descriptions = description_array | split: "," %}
+          {% assign description = descriptions[forloop.index] %}
+
+          {% if block.type == "product" %}
+            
+            {% assign product = block.settings.cart_cross_sell_product %}
+            {% assign toggle_compare_price = block.settings.toggle_compare_price %}
+            {% assign show_title = block.settings.cart_product_title %}
+            {% assign toggle_price = block.settings.toggle_price %}
+            {% assign product_text = block.settings.cart_cross_sell_top_text %}
+            {% assign button_text = block.settings.cart_cross_sell_button %}
+            {% assign variant-id = all_products[product].first_available_variant.id %}
+            {% assign amount_of_variants = product.variants | size %}
+            {% assign cart_titles = promo_titles | split: ", " %}
+            {% assign product_handle = product.title | handleize %}
+            {% assign in_cart = true %}
+            {% if product.price > product.compare_at_price %}
+              {% assign toggle_compare_price = false %}
+            {% endif %}
+
+            {% for title in cart_titles %}
+              {% if title == product_handle %}
+                {% assign in_cart = false %}
+              {% endif %}
+            {% endfor %}
+
+            {% if in_cart and counter <= product_count %}
+              {% assign counter = counter | plus: 1 %}
+              <div
+                class="cart-cross-sell"
+                data-block-id="{{ block.id }}">
+                <div class="cart-cross-sell-row">
+                  <div class="cart-cross-sell-image">
+                    <img src="{{ product | img_url: '300x' }}">
+                  </div>
+                  <div class="text-container">
+                    <div class="cart-cross-sell-text"{% if product_count == 2 and description == "true" %}
+                      style="justify-content: space-between;">
+                    {% endif %} 
+                      <div>
+                        <div>
+                          {% if show_title %}
+                            <a href="{{ product.url }}">
+                              <p class="cart-cross-sell-title truncate">{{ product.title }}</p>
+                            </a>
+                          {% endif %}
+                          {% if toggle_price %}
+                            <p class="product-price">
+                              <span>{{ product.price | money }}</span>
+                          {% if toggle_compare_price %}<span class="money compare-at-price">{{ product.compare_at_price | money }}</span>{% endif %}
+
+
+                            </p>
+                          {% endif %}
+
+                        </div>
+                        {% if description == "true" %}
+
+                          <div class="description-text">
+                            {{ product_text }}
+                          </div>
+                        {% endif %}
+                      </div>
+                      <div class="cart-cross-sell-button">
+                        <a href="{% if variant-id == blank %}{% elsif amount_of_variants != 1 %}{{ product.url }}{% else %}/cart/add?id={{ variant-id }}{% endif %}" class="button action_button button--add-to-cart">
+                         {% if button_text != blank %}{{ button_text }}{% elsif variant-id == blank %}OUT OF STOCK{% elsif amount_of_variants != 1 %}VIEW OPTIONS{% else %}ADD TO CART{% endif %}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+            {{ product_title }}
+            {%  continue  %} 
+                        {% endif %}
+          {% endif %}
+
+
+        {% endfor %}
+
+      </div>
+    </div>
+  </section>
+
+{% endif %}
+{% endif %}
+
+{% schema %}
+  {
     "name": "Cart simple cross-sell",
-    "category": "Content"
-  }],
-  "templates": [
-    "cart"
-  ]
-}
+    "class": "shopify-section--cart-simple-cross-sell",
+    "settings": [
+
+      {
+        "type": "select",
+        "id": "product_limit",
+        "label": "Amount of Products to be Displayed",
+        "options": [
+          {
+            "value": "1",
+            "label": "1"
+          }, {
+            "value": "2",
+            "label": "2"
+          }, {
+            "value": "3",
+            "label": "3"
+          }
+        ]
+
+
+      },
+      {
+        "type": "text",
+        "id": "header",
+        "label": "Header"
+      }, 
+      {
+        "type": "header",
+        "content": "Card Colors"
+
+      },
+      {
+            "type": "color",
+            "id": "background_color",
+            "label": "Background Color",
+            "default": "#ffffff"
+          }, {
+            "type": "color",
+            "id": "border_color",
+            "label": "Border Color",
+            "default": "#ffffff"
+          },
+      {
+        "type": "header",
+        "content": "Spacing"
+
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Top spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Bottom spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "header",
+        "content": "Mobile Spacing"
+      }, {
+        "type": "range",
+        "id": "mobile_padding_top",
+        "label": "Top spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "range",
+        "id": "mobile_padding_bottom",
+        "label": "Bottom spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "header",
+        "content": "Advanced",
+        "info": "[Learn more](https://help.outofthesandbox.com/hc/en-us/articles/360022329373)"
+      }, {
+        "type": "text",
+        "id": "css_class",
+        "label": "CSS Class"
+      }, {
+        "type": "textarea",
+        "id": "custom_css",
+        "label": "Custom CSS"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product",
+        "name": "Product",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Cross-sell"
+          },
+          {
+            "type": "product",
+            "id": "cart_cross_sell_product",
+            "label": "Product",
+            "info": "If the inventory for the product is zero, the product will not display."
+          },
+          {
+            "type": "checkbox",
+            "id": "cart_product_title",
+            "label": "Show product title",
+            "default":true
+          },
+          {
+            "type": "checkbox",
+            "id": "toggle_price",
+            "label": "Display Price",
+            "default": true
+          }, 
+          {
+            "type": "checkbox",
+            "id": "toggle_compare_price",
+            "label": "Display Compare At Price",
+            "default": false,
+            "info":"Will only display if compare at price is greater than standard price."
+          },
+          {
+            "type": "richtext",
+            "id": "cart_cross_sell_top_text",
+            "label": "Cross-sell text"
+          }, {
+            "type": "text",
+            "id": "cart_cross_sell_button",
+            "label": "Button text Override",
+            "info":"If the product contains variants it will send the user to its product page."
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Cart simple cross-sell",
+        "category": "Content"
+      }
+    ],
+    "templates": ["cart"]
+  }
 
 {% endschema %}
