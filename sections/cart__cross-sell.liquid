@@ -2,7 +2,8 @@
 
   Custom section created by JadePuma
   Instructions - https://jadepuma.com/blogs/shopify-tutorials/simple-cross-sell-section-for-your-shopify-cart
-  Last editted - 05Nov23
+  Last editted - 26Jan24
+
 {% endcomment %}
 
 
@@ -49,10 +50,8 @@
   {% endif %}
   {% assign product = block.settings.cart_cross_sell_product %}
   {% assign variant-id = all_products[product].first_available_variant.id %}
-
   
 {% endfor %}
-
 
 {% assign product_count = section.settings.product_limit | plus: 0 %}
 {% assign product_card_loop = product_count | plus: promos_in_cart %}
@@ -411,7 +410,7 @@
 
 {% schema %}
   {
-    "name": "Cart simple cross-sell",
+    "name": "JP Cart simple cross-sell",
     "class": "shopify-section--cart-simple-cross-sell",
     "settings": [
 
@@ -562,8 +561,8 @@
     ],
     "presets": [
       {
-        "name": "Cart simple cross-sell",
-        "category": "Content"
+        "name": "JP Cart simple cross-sell",
+        "category": "JadePuma"
       }
     ],
     "templates": ["cart"]
