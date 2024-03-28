@@ -55,9 +55,7 @@
   {% assign product = block.settings.cart_cross_sell_product %}
   {% assign variant-id = all_products[product].first_available_variant.id %}
 
-  
 {% endfor %}
-
 
 {% assign product_count = section.settings.product_limit | plus: 0 %}
 {% assign product_card_loop = product_count | plus: promos_in_cart %}
@@ -324,13 +322,11 @@ Setting up variables for product_count specific styles {% endcomment %}
   
   {% endstyle %}
 
-
-
 {% if product_count != 0 %}
   {% if cart_items_count != 0 %}
   <section class="section {{ css_class }}">
     <div class="cross-sell-header">
-      <h3>{{ section.settings.header }}</h3>
+      <h2>{{ section.settings.header }}</h2>
     </div>
     <div class="container">
       <div class="one-whole column custom-html-container">
