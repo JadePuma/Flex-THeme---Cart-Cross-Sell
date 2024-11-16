@@ -1,15 +1,7 @@
-{% comment %}
+{% comment %} 
   Custom section created by JadePuma
   Instructions - https://jadepuma.com/blogs/shopify-tutorials/simple-cross-sell-section-for-your-shopify-cart
-  Last editted - 4/16/24
-
-  Possible Improvements
-
-  - JS to dynamically show and hide items when added to cart so you don't have to reload the page
-
-  - a simpler version would be to reload page when you delete an item thats apart of the section
-
-  - Product Ratings under price
+  Last editted - 4/16/24 
 {% endcomment %}
 
 <!-- Start Cross Sell Section -->
@@ -17,8 +9,7 @@
 <script
   type="application/json"
   data-section-type="cart-simple-cross-sell"
-  data-section-id="{{ section.id }}"
-></script>
+  data-section-id="{{ section.id }}"></script>
 
 {% assign cart_items_count = cart.items | size %}
 {% assign promo_titles = '' %}
@@ -88,8 +79,7 @@
     {% assign css_cross_sell_text_padding = '30px 10px 10px 10px' %}
     {% assign css_cross_sell_text_justify_content = 'space-between' %}
 {% endcase %}
-{% assign border_color = section.settings.border_color %}
-{% assign background_color = section.settings.background_color %}
+{% assign border_color = section.settings.border_color %}{% assign background_color = section.settings.background_color %}
 
 {% comment %} Advanced {% endcomment %}
 {% assign css_class = section.settings.css_class %}
@@ -106,10 +96,10 @@
     {% endif %}
   }
   {%
-  render 'css-loop',
+render 'css-loop',
       css: custom_css,
       id: id
-  %}
+%}
 
   .cart-cross-sell {
     padding: {{ css_cross_sell_padding }};
@@ -281,8 +271,8 @@
       max-width: 245px;
 
     }
-    .cart-cross-sell-image{
-      flex:none;
+    .cart-cross-sell-image {
+      flex: none;
     }
 
     .cart-cross-sell-text {
@@ -362,10 +352,7 @@
 
               {% if in_cart and counter <= product_count and product.available %}
                 {% assign counter = counter | plus: 1 %}
-                <div
-                  class="cart-cross-sell"
-                  data-block-id="{{ block.id }}"
-                >
+                <div class="cart-cross-sell" data-block-id="{{ block.id }}">
                   <div class="cart-cross-sell-row">
                     <div class="cart-cross-sell-image">
                       <img src="{{ product | img_url: '300x' }}">
@@ -374,9 +361,8 @@
                       <div
                         class="cart-cross-sell-text"
                         {% if product_count == 2 and description == 'true' %}
-                          style="justify-content: space-between;"
-                        {% endif %}
-                      >
+                        style="justify-content: space-between;"
+                        {% endif %}>
                         <div>
                           <div>
                             {% if show_title %}
@@ -400,10 +386,7 @@
                           {% endif %}
                         </div>
                         <div class="cart-cross-sell-button">
-                          <a
-                            href="{% if variant-id == blank %}{% elsif amount_of_variants != 1 %}{{ product.url }}{% else %}/cart/add?id={{ variant-id }}{% endif %}"
-                            class="button action_button button--add-to-cart"
-                          >
+                          <a href="{% if variant-id == blank %}{% elsif amount_of_variants != 1 %}{{ product.url }}{% else %}/cart/add?id={{ variant-id }}{% endif %}" class="button action_button button--add-to-cart">
                             {% if button_text != blank -%}
                               {{- button_text -}}
                             {%- elsif variant-id == blank -%}
@@ -432,168 +415,153 @@
 {% endif %}
 
 {% schema %}
-{
-  "name": "Cart simple cross-sell",
-  "class": "shopify-section--cart-simple-cross-sell",
-  "settings": [
-    {
-      "type": "select",
-      "id": "product_limit",
-      "label": "Amount of Products to be Displayed",
-      "options": [
-        {
-          "value": "1",
-          "label": "1"
-        },
-        {
-          "value": "2",
-          "label": "2"
-        },
-        {
-          "value": "3",
-          "label": "3"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "id": "header",
-      "label": "Header"
-    },
-    {
-      "type": "header",
-      "content": "Card Colors"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Background Color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "Border Color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "header",
-      "content": "Spacing"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "label": "Top spacing",
-      "min": 0,
-      "max": 80,
-      "default": 20,
-      "unit": "px",
-      "step": 1
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "label": "Bottom spacing",
-      "min": 0,
-      "max": 80,
-      "default": 20,
-      "unit": "px",
-      "step": 1
-    },
-    {
-      "type": "header",
-      "content": "Mobile Spacing"
-    },
-    {
-      "type": "range",
-      "id": "mobile_padding_top",
-      "label": "Top spacing",
-      "min": 0,
-      "max": 80,
-      "default": 20,
-      "unit": "px",
-      "step": 1
-    },
-    {
-      "type": "range",
-      "id": "mobile_padding_bottom",
-      "label": "Bottom spacing",
-      "min": 0,
-      "max": 80,
-      "default": 20,
-      "unit": "px",
-      "step": 1
-    },
-    {
-      "type": "header",
-      "content": "Advanced",
-      "info": "[Learn more](https://help.outofthesandbox.com/hc/en-us/articles/360022329373)"
-    },
-    {
-      "type": "text",
-      "id": "css_class",
-      "label": "CSS Class"
-    },
-    {
-      "type": "textarea",
-      "id": "custom_css",
-      "label": "Custom CSS"
-    }
-  ],
-  "blocks": [
-    {
-      "type": "product",
-      "name": "Product",
-      "settings": [
-        {
-          "type": "header",
-          "content": "Cross-sell"
-        },
-        {
-          "type": "product",
-          "id": "cart_cross_sell_product",
-          "label": "Product",
-          "info": "If the inventory for the product is zero, the product will not display."
-        },
-        {
-          "type": "checkbox",
-          "id": "cart_product_title",
-          "label": "Show product title",
-          "default": true
-        },
-        {
-          "type": "checkbox",
-          "id": "toggle_price",
-          "label": "Display Price",
-          "default": true
-        },
-        {
-          "type": "checkbox",
-          "id": "toggle_compare_price",
-          "label": "Display Compare At Price",
-          "default": false
-        },
-        {
-          "type": "richtext",
-          "id": "cart_cross_sell_top_text",
-          "label": "Cross-sell text"
-        },
-        {
-          "type": "text",
-          "id": "cart_cross_sell_button",
-          "label": "Button text Override",
-          "info": "If the product contains variants it will send the user to its product page."
-        }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "JP Cart cross-sell",
+  {
+    "name": "Cart simple cross-sell",
+    "class": "shopify-section--cart-simple-cross-sell",
+    "settings": [
+      {
+        "type": "select",
+        "id": "product_limit",
+        "label": "Amount of Products to be Displayed",
+        "options": [
+          {
+            "value": "1",
+            "label": "1"
+          }, {
+            "value": "2",
+            "label": "2"
+          }, {
+            "value": "3",
+            "label": "3"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "header",
+        "label": "Header"
+      },
+      {
+        "type": "header",
+        "content": "Card Colors"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background Color",
+        "default": "#ffffff"
+      }, {
+        "type": "color",
+        "id": "border_color",
+        "label": "Border Color",
+        "default": "#ffffff"
+      }, {
+        "type": "header",
+        "content": "Spacing"
+      }, {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Top spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Bottom spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "header",
+        "content": "Mobile Spacing"
+      }, {
+        "type": "range",
+        "id": "mobile_padding_top",
+        "label": "Top spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "range",
+        "id": "mobile_padding_bottom",
+        "label": "Bottom spacing",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px",
+        "step": 1
+      }, {
+        "type": "header",
+        "content": "Advanced",
+        "info": "[Learn more](https://help.outofthesandbox.com/hc/en-us/articles/360022329373)"
+      }, {
+        "type": "text",
+        "id": "css_class",
+        "label": "CSS Class"
+      }, {
+        "type": "textarea",
+        "id": "custom_css",
+        "label": "Custom CSS"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product",
+        "name": "Product",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Cross-sell"
+          },
+          {
+            "type": "product",
+            "id": "cart_cross_sell_product",
+            "label": "Product",
+            "info": "If the inventory for the product is zero, the product will not display."
+          },
+          {
+            "type": "checkbox",
+            "id": "cart_product_title",
+            "label": "Show product title",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "toggle_price",
+            "label": "Display Price",
+            "default": true
+          }, {
+            "type": "checkbox",
+            "id": "toggle_compare_price",
+            "label": "Display Compare At Price",
+            "default": false
+          }, {
+            "type": "richtext",
+            "id": "cart_cross_sell_top_text",
+            "label": "Cross-sell text"
+          }, {
+            "type": "text",
+            "id": "cart_cross_sell_button",
+            "label": "Button text Override",
+            "info": "If the product contains variants it will send the user to its product page."
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "JP Cart cross-sell",
 
-      "category": "JadePuma"
-    }
-  ],
-  "templates": ["cart"]
-}
+        "category": "JadePuma"
+      }
+    ],
+    "templates": ["cart"]
+  }
 {% endschema %}
